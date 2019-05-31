@@ -23,8 +23,10 @@ namespace Client
         List<PictureBox> pictureBoxList1 = new List<PictureBox>();
         List<PictureBox> pictureBoxList2 = new List<PictureBox>();
 
+        List<PictureBox> pictureBoxList3 = new List<PictureBox>();
 
-        string path = @"C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\Resources\";
+
+        string path = @"C:\Users\ASUS\Desktop\gametienlien 31-5\GameTienLen\Client\Resources\";
         public DanhBai(TCPModel player, TCPModel Opponent)
         {
             InitializeComponent();
@@ -36,14 +38,7 @@ namespace Client
                 btnReady.Enabled = false;
 
             Y = pictureBox1.Location.Y;
-            Thread t = new Thread(NhanBai);
-            t.Start();
-        }
-
-        private void btnReady_Click(object sender, EventArgs e)
-        {          
-            tcpForPlayer.SendData("chiabai");
-            string result = tcpForPlayer.ReadData();
+           
             pictureBoxList1.Add(pictureBox1);
             pictureBoxList1.Add(pictureBox2);
             pictureBoxList1.Add(pictureBox3);
@@ -70,6 +65,50 @@ namespace Client
             pictureBoxList2.Add(pictureBox24);
             pictureBoxList2.Add(pictureBox25);
             pictureBoxList2.Add(pictureBox26);
+
+            pictureBoxList3.Add(pictureBox27);                                         
+            pictureBoxList3.Add(pictureBox28);
+            pictureBoxList3.Add(pictureBox29);
+            pictureBoxList3.Add(pictureBox30);
+            pictureBoxList3.Add(pictureBox31);
+            pictureBoxList3.Add(pictureBox32);
+            pictureBoxList3.Add(pictureBox33);
+            pictureBoxList3.Add(pictureBox34);
+            pictureBoxList3.Add(pictureBox35);
+            pictureBoxList3.Add(pictureBox36);
+            pictureBoxList3.Add(pictureBox37);
+            pictureBoxList3.Add(pictureBox38);
+            pictureBoxList3.Add(pictureBox39);
+            Thread t = new Thread(NhanBai);
+            t.Start();
+
+        }
+
+        void ResetPictureBoxList2(int n)
+        { 
+            for (int i = 0; i < n; i++)
+            {
+                pictureBoxList2[i].Image.Dispose();
+                pictureBoxList2[i].BackColor = DefaultBackColor;
+                pictureBoxList2[i].BorderStyle = BorderStyle.None;
+                pictureBoxList2[i].Tag = null;
+            }
+        }
+        void ResetPictureBoxList1(int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                pictureBoxList1[i].Image.Dispose();
+                pictureBoxList1[i].BackColor = DefaultBackColor;
+                pictureBoxList1[i].BorderStyle = BorderStyle.None;
+                pictureBoxList1[i].Tag = null;
+            }
+        }
+        private void btnReady_Click(object sender, EventArgs e)
+        {          
+            tcpForPlayer.SendData("chiabai");
+            string result = tcpForPlayer.ReadData();
+           
             //Nếu người chơi nhận được lượt đánh thì enable btbDanh
             if (result.Contains("turn")){
                 result = result.Remove(result.Length - 4);//Xóa 4 kí tự cuối chuối(là string "turn")
@@ -96,85 +135,107 @@ namespace Client
         {
             while (true)
             {
-                string result = tcpForOpponent.ReadData();//Bài của đối thủ vừa đánh
-                //Nếu nhận được "newturn" thì người chơi có quyền đánh những lá tùy ý.
-                if (result == "newturn"){
-                    BaiCuaDoiThu.Clear();
-                    btnDanh.Enabled = true;
-                }
-                //Trường người chơi trước bỏ lượt, và lượt hiện tại của người chơi này
-                else if (result == "turn"){
-                    btnDanh.Enabled = true;
-                    btnBoLuot.Enabled = true;
-                }
-                //Trường hợp tới lượt đánh của người chơi
-                else if (result.Contains("turn")){                   
-                    result = result.Remove(result.Length - 4);//Xóa 4 kí tự cuối chuối(là string "turn")
-                    btnDanh.Enabled = true;
-                    btnBoLuot.Enabled = true;
-                    // Gọi hàm load hình: LoadHinh(BaiCuaDoiThu);
-                    //for (int i = 0; i < 13; i++)
-                    //{
-                    //    pictureBoxList2[i].Image = null;
-                    //    pictureBoxList2[i].BackColor = DefaultBackColor;
-                    //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
-                    //    pictureBoxList2[i].Tag = null;
-                    //}
+                try
+                {
+                    string result = tcpForOpponent.ReadData();//Bài của đối thủ vừa đánh
+                                                              //Nếu nhận được "newturn" thì người chơi có quyền đánh những lá tùy ý.
+                    if (result == "newturn")
+                    {
+                        BaiCuaDoiThu.Clear();
+                        btnDanh.Enabled = true;
+                    }
+                    //Trường người chơi trước bỏ lượt, và lượt hiện tại của người chơi này
+                    else if (result == "turn")
+                    {
+                        btnDanh.Enabled = true;
+                        btnBoLuot.Enabled = true;
+                    }
+                    //Trường hợp tới lượt đánh của người chơi
+                    else if (result.Contains("turn"))
+                    {
+                        result = result.Remove(result.Length - 4);//Xóa 4 kí tự cuối chuối(là string "turn")
+                        btnDanh.Enabled = true;
+                        btnBoLuot.Enabled = true;
+                        ConvertToListDouble(BaiCuaDoiThu, result);
+                        string temp = ConvertToString(BaiCuaDoiThu);
+                        txtBaiCuaDoiThu.Text = temp;
+                        // Gọi hàm load hình: LoadHinh(BaiCuaDoiThu);
+                        //for (int i = 0; i < 13; i++)
+                        //{
+                        //    pictureBoxList3[i].Image.Dispose();
+                        //    pictureBoxList3[i].BackColor = DefaultBackColor;
+                        //    pictureBoxList3[i].BorderStyle = BorderStyle.None;
+                        //    pictureBoxList3[i].Tag = null;
+                        //}
 
-                    //for (int i=0;i<BaiCuaDoiThu.Count();i++)
-                    //{
-                    //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
-                    //    pictureBoxList2[i].BackColor = Color.White;
-                    //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
-                    //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
-                    //}
+
+                        //List<double> y = new List<double> { 3.1 };
+                        //for (int i = 0; i < y.Count(); i++)
+                        //{
+                        //    pictureBoxList3[i].Image = Image.FromFile(path + y[i].ToString() + ".png");
+                        //    pictureBoxList3[i].BackColor = Color.White;
+                        //    pictureBoxList3[i].BorderStyle = BorderStyle.FixedSingle;
+                        //    pictureBoxList3[i].Tag = y[i];
+                        //  //  pictureBoxList3[i].Visible = true;
+                        //}
+                        HienThiBai(temp);
+
+
+                    }
+                    //Đây là trường hợp đã có người chơi trong bàn win. Tiến hành Load bài đó và set lại game
+                    else if (result.Contains("win"))
+                    {
+                        result = result.Remove(result.Length - 3);
+                        ConvertToListDouble(BaiCuaDoiThu, result);
+                        txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
+
+                        //for (int i = 0; i < 13; i++)
+                        //{
+                        //    pictureBoxList2[i].Image = null;
+                        //    pictureBoxList2[i].BackColor = DefaultBackColor;
+                        //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
+                        //    pictureBoxList2[i].Tag = null;
+                        //}
+
+                        //for (int i = 0; i < BaiCuaDoiThu.Count(); i++)
+                        //{
+                        //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
+                        //    pictureBoxList2[i].BackColor = Color.White;
+                        //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
+                        //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
+                        //}
+                        BaiHienTai.Clear();
+                        BaiCuaDoiThu.Clear();
+                        btnDanh.Enabled = false;
+                        btnBoLuot.Enabled = false;
+                        btnReady.Enabled = true;
+                    }
+                    //Đây là trường hợp người chơi không có lượt đánh. Chỉ nhận được bài của đối thủ
+                    else if (char.IsDigit(result[0]))
+                    {
+                        ConvertToListDouble(BaiCuaDoiThu, result);
+                        txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
+                        for (int i = 0; i < 13; i++)
+                        {
+                            pictureBoxList2[i].Image = null;
+                            pictureBoxList2[i].BackColor = DefaultBackColor;
+                            pictureBoxList2[i].BorderStyle = BorderStyle.None;
+                            pictureBoxList2[i].Tag = null;
+                        }
+
+                        for (int i = 0; i < BaiCuaDoiThu.Count(); i++)
+                        {
+                            pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
+                            pictureBoxList2[i].BackColor = Color.White;
+                            pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
+                            pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
+                        }
+                    }
+                    result = "";
                 }
-                //Đây là trường hợp đã có người chơi trong bàn win. Tiến hành Load bài đó và set lại game
-                else if (result.Contains("win")){
-                    result = result.Remove(result.Length - 3);                   
-                    ConvertToListDouble(BaiCuaDoiThu, result);
-                    txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
-
-                    //for (int i = 0; i < 13; i++)
-                    //{
-                    //    pictureBoxList2[i].Image = null;
-                    //    pictureBoxList2[i].BackColor = DefaultBackColor;
-                    //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
-                    //    pictureBoxList2[i].Tag = null;
-                    //}
-
-                    //for (int i = 0; i<BaiCuaDoiThu.Count();i++)
-                    //{
-                    //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
-                    //    pictureBoxList2[i].BackColor = Color.White;
-                    //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
-                    //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
-                    //}
-                    BaiHienTai.Clear();
-                    BaiCuaDoiThu.Clear();
-                    btnDanh.Enabled = false;
-                    btnBoLuot.Enabled = false;
-                    btnReady.Enabled = true;
-                }
-                //Đây là trường hợp người chơi không có lượt đánh. Chỉ nhận được bài của đối thủ
-                else if (char.IsDigit(result[0])){
-                    ConvertToListDouble(BaiCuaDoiThu, result);
-                    txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
-                    //for (int i = 0; i < 13; i++)
-                    //{
-                    //    pictureBoxList2[i].Image = null;
-                    //    pictureBoxList2[i].BackColor = DefaultBackColor;
-                    //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
-                    //    pictureBoxList2[i].Tag = null;
-                    //}
-
-                    //for (int i = 0; i < BaiCuaDoiThu.Count(); i++)
-                    //{
-                    //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
-                    //    pictureBoxList2[i].BackColor = Color.White;
-                    //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
-                    //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
-                    //}
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.StackTrace);
                 }
             }
         }
@@ -283,6 +344,30 @@ namespace Client
             foreach (var i in Cards)
                 String += i.ToString() + "\t";
             return String;
+
+        }
+        public void HienThiBai(string b)
+        {
+            b = b.Trim();
+            string[] a = b.Split('\t');
+            //p1.BackgroundImage = p2.BackgroundImage = p3.BackgroundImage = p4.BackgroundImage = p5.BackgroundImage = p6.BackgroundImage = null;
+            //p7.BackgroundImage = p8.BackgroundImage = p9.BackgroundImage = p10.BackgroundImage = null;
+            //p11.BackgroundImage = p12.BackgroundImage = p13.BackgroundImage = null;
+
+            for (int i = 0; i < a.Length ; i++)
+            {
+                pictureBoxList2[i].BringToFront();
+                pictureBoxList2[i].Tag = a[i];
+                pictureBoxList2[i].BackgroundImage = Image.FromFile(path + a[i] + ".png");
+                pictureBoxList2[i].Visible = true;
+
+
+
+             
+            }
+            //if (a[0] == "d")
+            //    return;
+
 
         }
     }

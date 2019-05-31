@@ -158,6 +158,7 @@ namespace Server
                 if (char.IsDigit(str[0]) && !str.Contains("win"))
                 {
                     //set turn
+                   
                     danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
                     SetBoLuot(sophong);
 
@@ -167,8 +168,12 @@ namespace Server
                     //Gửi cho người chơi còn lại trong phòng
                     for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
                     {
-                        if (danhSachPhong[sophong].players[i].pos != pos || danhSachPhong[sophong].players[i].pos != turn)
-                            socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
+                        //  if (danhSachPhong[sophong].players[i].pos != pos || danhSachPhong[sophong].players[i].pos != turn)
+                        //if (danhSachPhong[sophong].players[i].pos != pos || i!= turn)
+                        //    socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
+                        if (danhSachPhong[sophong].players[i].pos == pos || i == turn)
+                            break;
+                        socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
                     }
                 }
                 if (str == "boluot")
