@@ -12,22 +12,19 @@ namespace Server
         string userName;
         string avatar;
         public int soTienConLai;
-        public int role; // 0: Người xem; 1: Người chơi
         public int pos;
         int soQuanBaiConLai;
-        public bool ready;
         public int room;
         public Player(int index)
         {
             //userName = name;
             //avatar = "";
             soTienConLai = 10000;
-            role = 0;
             soQuanBaiConLai = 13;
             pos = index;
-            ready = false;
             room = -1;
 
         }
     }
 }
+

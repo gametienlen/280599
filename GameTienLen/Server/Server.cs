@@ -15,29 +15,28 @@ namespace Server
     public partial class Server : Form
     {
         private TCPModel tcp;
-        public SocketModel[] socketList1;
-
+        private SocketModel[] socketList1;
         private SocketModel[] socketList2;
         private int numberOfPlayers = 200;
         private int currentClient;
         private object thislock;
 
         List<Room> danhSachPhong;
-        List<Player> danhSachNguoiChoi=new List<Player>();
+        List<Player> danhSachNguoiChoi = new List<Player>();
         public Server()
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
             thislock = new object();
             danhSachPhong = new List<Room>(10);
-          //  for (int i = 0; i < 10; i++)
-                danhSachPhong.Add(new Room());
+            //  for (int i = 0; i < 10; i++)
+            danhSachPhong.Add(new Room());
         }
 
         public void StartServer()
         {
             string ip = txbIP.Text;
-            int port = int.Parse(txbPort.Text);            
+            int port = int.Parse(txbPort.Text);
             tcp = new TCPModel(ip, port);
             tcp.Listen();
             btnStart.Enabled = false;
@@ -57,8 +56,8 @@ namespace Server
             Socket s = tcp.SetUpANewConnection(ref status);
             socketList1[currentClient] = new SocketModel(s);
 
-            string str = socketList1[currentClient].GetRemoteEndpoint();           
-            txbConnectionManager.AppendText("\nNew connection from: " + str +"id"+  currentClient+"\n" );
+            string str = socketList1[currentClient].GetRemoteEndpoint();
+            txbConnectionManager.AppendText("\nNew connection from: " + str + "id" + currentClient + "\n");
 
         }
         public void Accept2()
@@ -67,7 +66,7 @@ namespace Server
             Socket s = tcp.SetUpANewConnection(ref status);
             socketList2[currentClient] = new SocketModel(s);
             string str = socketList2[currentClient].GetRemoteEndpoint();
-            txbConnectionManager.AppendText("\nNew connection from: " + str + "id" + currentClient + "\n" );
+            txbConnectionManager.AppendText("\nNew connection from: " + str + "id" + currentClient + "\n");
         }
 
         public void ServeAClient()
@@ -85,8 +84,8 @@ namespace Server
         }
 
         void DangNhap(int index)
-        {           
-            danhSachNguoiChoi.Add(new Player(index));               
+        {
+            danhSachNguoiChoi.Add(new Player(index));
         }
 
         int TimPhong(int index)
@@ -94,49 +93,45 @@ namespace Server
             int j = 0;
             foreach (var i in danhSachPhong)
             {
-                if (i.isFull() == false)
+                if (i.soNguoiTrongPhong < 4)
                 {
+                    //Thêm người chơi đó vào phòng
                     i.players.Add(danhSachNguoiChoi[index]);
+                    //Set thuộc tính phòng cho người chơi
                     i.players[i.players.Count - 1].room = j;
-                    if (i.isFull() == true)
+                    i.soNguoiTrongPhong++;
+                    if (i.soNguoiTrongPhong == 4)
                         danhSachPhong.Add(new Room());
                     return j;
                 }
                 j++;
             }
             return -1;
-            //   danhSachPhong.Add(new Room(danhSachNguoiChoi[index]));
         }
+
         void ChiaBai(int sophong)
         {
-            if (danhSachPhong[sophong].Ready() == danhSachPhong[sophong].players.Count){
+            if (danhSachPhong[sophong].readyPlayers == danhSachPhong[sophong].soNguoiTrongPhong)
                 danhSachPhong[sophong].chiaBai(socketList1);
-                for (int j = 0; j < danhSachPhong[sophong].players.Count; j++)
-                    danhSachPhong[sophong].players[j].ready = false;
-            }         
         }
 
         void SetBoLuot(int sophong)
         {
             while (danhSachPhong[sophong].DanhSachBoLuot.Contains(danhSachPhong[sophong].turn))
-                danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].players.Count();
+                danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
 
         }
+
         public void Commmunication(object obj)
-        {         
+        {
             int pos = (Int32)obj;
             while (true)
             {
                 string str = socketList1[pos].ReceiveData();
-                //int sophong = -1;
-                //int soLuongNguoiChoiTrongPhong = 0;
-
-                //Nếu người chơi đã đăng nhập và đã vào phong thì set 2 biên bên dưới để cho tiện sử dụng
-                //if (danhSachNguoiChoi.Count != 0 && danhSachNguoiChoi[pos].room != -1)
-                //{
-                //    sophong = danhSachNguoiChoi[pos].room;
-                //    soLuongNguoiChoiTrongPhong = danhSachPhong[sophong].players.Count;
-                //}
+                // Nếu người chơi đã đăng nhập và đã vào phong thì set biến phòng cho dể sử dụng
+                int sophong = -1;
+                if (danhSachNguoiChoi.Count > pos && danhSachNguoiChoi[pos].room != -1)
+                    sophong = danhSachNguoiChoi[pos].room;
 
                 if (str == "dangnhap")
                 {
@@ -145,91 +140,75 @@ namespace Server
                 }
                 if (str == "timphong")
                 {
-                    int room=TimPhong(pos)+1;
-                    socketList1[pos].SendData("Bạn đã được thêm vào phòng số "+room);
-                }
-                if(str=="chiabai")
-                {
+                    int room = TimPhong(pos) + 1;
+                    socketList1[pos].SendData("Bạn đã được thêm vào phòng số " + room);
 
-                    danhSachNguoiChoi[pos].ready = true;// Khi người chơi sẳn sàng nhận bài thì cờ ready được bật lên và khi số cờ ready trong phòng bằng với số người chơi hiện tại trong phòng thì bài sẽ được chia
-                    ChiaBai(danhSachNguoiChoi[pos].room);                   
+                    if (danhSachPhong[danhSachNguoiChoi[pos].room].isPlaying == true)
+                        socketList1[pos].SendData("isplaying");
+                    else
+                        socketList1[pos].SendData("notyetplaying");
+
+                }
+                if (str == "chiabai")
+                {
+                    danhSachPhong[danhSachNguoiChoi[pos].room].readyPlayers++;
+                    ChiaBai(danhSachNguoiChoi[pos].room);
                 }
                 //Khi Server nhận bài đánh ra từ các người chơi, Server sẽ broadcast cho các người chơi còn lại
-                if(char.IsDigit(str[0])&&!str.Contains("win"))
+                if (char.IsDigit(str[0]) && !str.Contains("win"))
                 {
-                    int sophong = danhSachNguoiChoi[pos].room;
-                    int soLuongNguoiChoiTrongPhong = danhSachPhong[sophong].players.Count;
                     //set turn
-                    danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % soLuongNguoiChoiTrongPhong;
-                   
+                    danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
                     SetBoLuot(sophong);
+
                     int turn = danhSachPhong[sophong].turn;
                     //Gửi bài kèm theo lượt cho người chơi
                     socketList2[danhSachPhong[sophong].players[turn].pos].SendData(str + "turn");
                     //Gửi cho người chơi còn lại trong phòng
-                    for (int i = 0; i < soLuongNguoiChoiTrongPhong; i++){
-                        if (danhSachPhong[sophong].players[i].pos != pos || danhSachPhong[sophong].players[i].pos != turn )                   
-                                socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
+                    for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
+                    {
+                        if (danhSachPhong[sophong].players[i].pos != pos || danhSachPhong[sophong].players[i].pos != turn)
+                            socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
                     }
                 }
-                if(str=="boluot")
+                if (str == "boluot")
                 {
-                    int sophong = danhSachNguoiChoi[pos].room;
                     //Thêm ID của người chơi hiện tại về danh sách bỏ lượt
                     danhSachPhong[sophong].DanhSachBoLuot.Add(danhSachPhong[sophong].turn);
-                    danhSachPhong[sophong].turn=(danhSachPhong[sophong].turn+1)% danhSachPhong[sophong].players.Count();
 
                     //Nếu tất cả các người chơi khác đã bỏ lượt thì set lượt mới
-                    if (danhSachPhong[sophong].DanhSachBoLuot.Count() == danhSachPhong[sophong].players.Count() - 1){                       
-                        danhSachPhong[sophong].DanhSachBoLuot.Clear();
+                    if (danhSachPhong[sophong].DanhSachBoLuot.Count() == danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai - 1)
+                    {
+                        for (int i = 0; i < danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai; i++)
+                            if (!danhSachPhong[sophong].DanhSachBoLuot.Contains(i))
+                                danhSachPhong[sophong].turn = i;
+
                         socketList2[danhSachPhong[sophong].players[danhSachPhong[sophong].turn].pos].SendData("newturn");
+                        danhSachPhong[sophong].DanhSachBoLuot.Clear();
                     }
-                    else{
+                    else
+                    {
+                        danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
                         SetBoLuot(sophong);
                         socketList2[danhSachPhong[sophong].players[danhSachPhong[sophong].turn].pos].SendData("turn");
                     }
                 }
-                if(str.Contains("win"))
+                if (str.Contains("win"))
                 {
-                    int sophong = danhSachNguoiChoi[pos].room;
                     danhSachPhong[sophong].ResetRoom(danhSachPhong[sophong].turn);
-                    for (int i = 0; i < danhSachPhong[sophong].players.Count(); i++)
+                    for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
                         if (danhSachPhong[sophong].players[i].pos != pos)
                             socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
                 }
-   
+
             }
         }
-        public void BroadcastResult(int pos, string result)
-        {
-            socketList2[pos].SendData(result);
-            //if (pos == 0)
-            //{
-            //    socketList2[1].SendData(result);
-            //    return;
-            //}
-            //socketList2[0].SendData(result);
-        }
 
-      
         private void btnStart_Click(object sender, EventArgs e)
         {
             StartServer();
             Thread t = new Thread(ServeClients);
             t.Start();
-
-
-            //BoBai x = new BoBai();
-            //x.xaoBai();
-            //textBox1.Text = x.inbai() + "fsdfsdfsdfsdf\r\n" + x.boBai[0].LayBai();
-
-            //txbPort.Text = x.ktra();
-
-            //Room r = new Room();
-            //r.chiaBai();
-            //r.xembai();
         }
-
-
     }
 }

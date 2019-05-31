@@ -22,3 +22,15 @@ C:\Users\ASUS\Desktop\tl\GameTienLen\Client\obj\Debug\Client.csproj.GenerateReso
 C:\Users\ASUS\Desktop\tl\GameTienLen\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
 C:\Users\ASUS\Desktop\tl\GameTienLen\Client\obj\Debug\Client.exe
 C:\Users\ASUS\Desktop\tl\GameTienLen\Client\obj\Debug\Client.pdb
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\bin\Debug\Client.exe.config
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\bin\Debug\Client.exe
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\bin\Debug\Client.pdb
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.Client.resources
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.DanhBai.resources
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.fLogin.resources
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.Properties.Resources.resources
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.csproj.GenerateResource.Cache
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.exe
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.pdb
+C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache

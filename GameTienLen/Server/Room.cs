@@ -16,13 +16,13 @@ namespace Server
         public int soNguoiTrongPhong;
         public int readyPlayers;
         public int turn;// Khi turn=1 nghĩa là lượt đánh của người chơi 1; turn=2 nghĩa là lượt của người 2...
-        public List <int> DanhSachBoLuot;// Người chơi này bỏ lượt thì index của người đó sẽ được lưu vào đây
+        public List<int> DanhSachBoLuot;// Người chơi này bỏ lượt thì index của người đó sẽ được lưu vào đây
         private int sovan;// số ván bài đã chơi trong phòng
         private BoBai bobai;
-
+        public int soNguoiChoiTaiLucChiaBai;
 
         public Room()
-        {           
+        {
             players = new List<Player>(4);
             nguoiDangThang = 0;
             soTienCuoc = 1000;
@@ -32,54 +32,55 @@ namespace Server
             bobai = new BoBai();
             sovan = 0;
             DanhSachBoLuot = new List<int>();
+            isPlaying = false;
         }
+
         public void ResetRoom(int playerWin)
         {
-            nguoiDangThang = playerWin;            
+
+            nguoiDangThang = playerWin;
             readyPlayers = 0;
             bobai = new BoBai();
             DanhSachBoLuot = new List<int>();
             turn = playerWin;
             sovan += 1;
+            isPlaying = false;
         }
 
-        public bool isFull()
-        {
-            if (players.Count == 4)
-                return true;
-            return false;
-        }
+        //public int Ready()
+        //{
+        //    readyPlayers++;
+        //    return readyPlayers;
+        //}
 
-        public int Ready()
-        {
-            //for (int i = 0; i < players.Count; i++)
-            //    if (players[i].ready == true)
-            readyPlayers++;
-            return readyPlayers;
-        }
-        
         public void chiaBai(SocketModel[] SocketList)
         {
-            bobai.xaoBai();         
+            //Khi chia bài thì đưa ra tín hiệu là phòng đang chơi và set role của người chơi là 1
+            isPlaying = true;
+            soNguoiChoiTaiLucChiaBai = players.Count();
+            bobai.xaoBai();
             int count = players.Count(); // Số người chơi hiện tại trong phòng
             string[] NguoiChoi = new string[4];//Giá trị bài mà mỗi người chơi nhận được sẽ được lưu tạm vào đây, Sau khi đủ 13 lá sẽ được gửi về client
             int indexOfPlayer;// chỉ số của List Player chạy từ 0 tới count (max(count)=4) 
             for (int i = 0; i < count * 13; i = indexOfPlayer + i)
             {
                 indexOfPlayer = 0;
-                for (int k = nguoiDangThang; k < count; k++){                  
+                for (int k = nguoiDangThang; k < count; k++)
+                {
                     if (i + indexOfPlayer < count * 13)
                         NguoiChoi[k] += bobai.boBai[i + indexOfPlayer].LayBai() + "\r\t";
                     indexOfPlayer++;
                 }
                 nguoiDangThang = 0;
             }
-            
+
             //Nếu là ván đầu tiên, thì lượt đánh dành cho người có cầm lá nhỏ nhất
             if (sovan == 0)
             {
-                for (int i = 0; i < count; i++){
-                    if (NguoiChoiCoQuanBaiNhoNhat(NguoiChoi) == i){
+                for (int i = 0; i < count; i++)
+                {
+                    if (NguoiChoiCoQuanBaiNhoNhat(NguoiChoi) == i)
+                    {
                         turn = i;
                         SocketList[players[i].pos].SendData(NguoiChoi[i] + "turn");
                     }
@@ -91,17 +92,19 @@ namespace Server
             else
             {
                 SocketList[players[turn].pos].SendData(NguoiChoi[turn] + "turn");
-                for (int i = 0; i < count; i++) { 
-                    if (i!=turn)
+                for (int i = 0; i < count; i++)
+                {
+                    if (i != turn)
                         SocketList[players[i].pos].SendData(NguoiChoi[i]);
                 }
             }
-            
+
         }
+
 
         void ConvertToListDouble(List<double> Cards, string String)
         {
-            
+
             String = String.Trim();
             string[] Result = String.Split('\t');
             for (int i = 0; i < Result.Length; i++)
@@ -110,7 +113,7 @@ namespace Server
             }
             Cards.Sort();
         }
-        int NguoiChoiCoQuanBaiNhoNhat(string [] NguoiChoi)
+        int NguoiChoiCoQuanBaiNhoNhat(string[] NguoiChoi)
         {
             Double min = 15.4; int index = 0;
             for (int i = 0; i < players.Count(); i++)
@@ -126,6 +129,6 @@ namespace Server
             }
             return index;
         }
-       
-    }  
+
+    }
 }

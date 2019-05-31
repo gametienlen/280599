@@ -18,7 +18,13 @@ namespace Client
         private List<double> BaiHienTai = new List<double>();
         private List<double> BaiCuaDoiThu = new List<double>();
         int Y;
-        string path = @"C:\Users\ASUS\Desktop\GameTienLen\GameTienLen\Client\Resources\";
+        int X;
+
+        List<PictureBox> pictureBoxList1 = new List<PictureBox>();
+        List<PictureBox> pictureBoxList2 = new List<PictureBox>();
+
+
+        string path = @"C:\Users\DELL\OneDrive\Desktop\Game2\GameTienLen\Client\Resources\";
         public DanhBai(TCPModel player, TCPModel Opponent)
         {
             InitializeComponent();
@@ -26,18 +32,46 @@ namespace Client
             tcpForOpponent = Opponent;
             btnDanh.Enabled = false;
             btnBoLuot.Enabled = false;
+            if (tcpForPlayer.ReadData() == "isplaying")
+                btnReady.Enabled = false;
+
+            Y = pictureBox1.Location.Y;
             Thread t = new Thread(NhanBai);
             t.Start();
-            Y = pictureBox1.Location.Y;
         }
 
         private void btnReady_Click(object sender, EventArgs e)
         {          
             tcpForPlayer.SendData("chiabai");
             string result = tcpForPlayer.ReadData();
-
+            pictureBoxList1.Add(pictureBox1);
+            pictureBoxList1.Add(pictureBox2);
+            pictureBoxList1.Add(pictureBox3);
+            pictureBoxList1.Add(pictureBox4);
+            pictureBoxList1.Add(pictureBox5);
+            pictureBoxList1.Add(pictureBox6);
+            pictureBoxList1.Add(pictureBox7);
+            pictureBoxList1.Add(pictureBox8);
+            pictureBoxList1.Add(pictureBox9);
+            pictureBoxList1.Add(pictureBox10);
+            pictureBoxList1.Add(pictureBox11);
+            pictureBoxList1.Add(pictureBox12);
+            pictureBoxList1.Add(pictureBox13);
+            pictureBoxList2.Add(pictureBox14);
+            pictureBoxList2.Add(pictureBox15);
+            pictureBoxList2.Add(pictureBox16);
+            pictureBoxList2.Add(pictureBox17);
+            pictureBoxList2.Add(pictureBox18);
+            pictureBoxList2.Add(pictureBox19);
+            pictureBoxList2.Add(pictureBox20);
+            pictureBoxList2.Add(pictureBox21);
+            pictureBoxList2.Add(pictureBox22);
+            pictureBoxList2.Add(pictureBox23);
+            pictureBoxList2.Add(pictureBox24);
+            pictureBoxList2.Add(pictureBox25);
+            pictureBoxList2.Add(pictureBox26);
             //Nếu người chơi nhận được lượt đánh thì enable btbDanh
-            if(result.Contains("turn")){
+            if (result.Contains("turn")){
                 result = result.Remove(result.Length - 4);//Xóa 4 kí tự cuối chuối(là string "turn")
                 btnDanh.Enabled = true;
             }   
@@ -47,59 +81,14 @@ namespace Client
             if (XuLyBai.KiemTraToiTrang(BaiHienTai) == true)
                 tcpForPlayer.SendData(ConvertToString(BaiHienTai) + "wintrang");
 
-            txbBai.Text = ConvertToString(BaiHienTai);//gọi hàm load hình LoadHinh(BaiHienTai)   
-            pictureBox1.Image = Image.FromFile(path + BaiHienTai[0].ToString() + ".png");
-            pictureBox1.BackColor = Color.White;
-            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Tag = BaiHienTai[0];
-            pictureBox2.Image = Image.FromFile(path + BaiHienTai[1].ToString() + ".png");
-            pictureBox2.BackColor = Color.White;
-            pictureBox2.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox2.Tag = BaiHienTai[1];
-            pictureBox3.Image = Image.FromFile(path + BaiHienTai[2].ToString() + ".png");
-            pictureBox3.BackColor = Color.White;
-            pictureBox3.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox3.Tag = BaiHienTai[2];
-            pictureBox4.Image = Image.FromFile(path + BaiHienTai[3].ToString() + ".png");
-            pictureBox4.BackColor = Color.White;
-            pictureBox4.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox4.Tag = BaiHienTai[3];
-            pictureBox5.Image = Image.FromFile(path + BaiHienTai[4].ToString() + ".png");
-            pictureBox5.BackColor = Color.White;
-            pictureBox5.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox5.Tag = BaiHienTai[4];
-            pictureBox6.Image = Image.FromFile(path + BaiHienTai[5].ToString() + ".png");
-            pictureBox6.BackColor = Color.White;
-            pictureBox6.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox6.Tag = BaiHienTai[5];
-            pictureBox7.Image = Image.FromFile(path + BaiHienTai[6].ToString() + ".png");
-            pictureBox7.BackColor = Color.White;
-            pictureBox7.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox7.Tag = BaiHienTai[6];
-            pictureBox8.Image = Image.FromFile(path + BaiHienTai[7].ToString() + ".png");
-            pictureBox8.BackColor = Color.White;
-            pictureBox8.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox8.Tag = BaiHienTai[7];
-            pictureBox9.Image = Image.FromFile(path + BaiHienTai[8].ToString() + ".png");
-            pictureBox9.BackColor = Color.White;
-            pictureBox9.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox9.Tag = BaiHienTai[8];
-            pictureBox10.Image = Image.FromFile(path + BaiHienTai[9].ToString() + ".png");
-            pictureBox10.BackColor = Color.White;
-            pictureBox10.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox10.Tag = BaiHienTai[9];
-            pictureBox11.Image = Image.FromFile(path + BaiHienTai[10].ToString() + ".png");
-            pictureBox11.BackColor = Color.White;
-            pictureBox11.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox11.Tag = BaiHienTai[10];
-            pictureBox12.Image = Image.FromFile(path + BaiHienTai[11].ToString() + ".png");
-            pictureBox12.BackColor = Color.White;
-            pictureBox12.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox12.Tag = BaiHienTai[11];
-            pictureBox13.Image = Image.FromFile(path + BaiHienTai[12].ToString() + ".png");
-            pictureBox13.BackColor = Color.White;
-            pictureBox13.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox13.Tag = BaiHienTai[12];
+            txbBai.Text = ConvertToString(BaiHienTai);//gọi hàm load hình LoadHinh(BaiHienTai)  
+            for(int i=0;i<BaiHienTai.Count();i++)
+            {
+                pictureBoxList1[i].Image = Image.FromFile(path + BaiHienTai[i].ToString() + ".png");
+                pictureBoxList1[i].BackColor = Color.White;
+                pictureBoxList1[i].BorderStyle = BorderStyle.FixedSingle;
+                pictureBoxList1[i].Tag = BaiHienTai[i];
+            }
             btnReady.Enabled = false;
         }
        
@@ -124,6 +113,21 @@ namespace Client
                     btnDanh.Enabled = true;
                     btnBoLuot.Enabled = true;
                     // Gọi hàm load hình: LoadHinh(BaiCuaDoiThu);
+                    //for (int i = 0; i < 13; i++)
+                    //{
+                    //    pictureBoxList2[i].Image = null;
+                    //    pictureBoxList2[i].BackColor = DefaultBackColor;
+                    //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
+                    //    pictureBoxList2[i].Tag = null;
+                    //}
+
+                    //for (int i=0;i<BaiCuaDoiThu.Count();i++)
+                    //{
+                    //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
+                    //    pictureBoxList2[i].BackColor = Color.White;
+                    //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
+                    //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
+                    //}
                 }
                 //Đây là trường hợp đã có người chơi trong bàn win. Tiến hành Load bài đó và set lại game
                 else if (result.Contains("win")){
@@ -131,6 +135,21 @@ namespace Client
                     ConvertToListDouble(BaiCuaDoiThu, result);
                     txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
 
+                    //for (int i = 0; i < 13; i++)
+                    //{
+                    //    pictureBoxList2[i].Image = null;
+                    //    pictureBoxList2[i].BackColor = DefaultBackColor;
+                    //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
+                    //    pictureBoxList2[i].Tag = null;
+                    //}
+
+                    //for (int i = 0; i<BaiCuaDoiThu.Count();i++)
+                    //{
+                    //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
+                    //    pictureBoxList2[i].BackColor = Color.White;
+                    //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
+                    //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
+                    //}
                     BaiHienTai.Clear();
                     BaiCuaDoiThu.Clear();
                     btnDanh.Enabled = false;
@@ -141,6 +160,21 @@ namespace Client
                 else if (char.IsDigit(result[0])){
                     ConvertToListDouble(BaiCuaDoiThu, result);
                     txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
+                    //for (int i = 0; i < 13; i++)
+                    //{
+                    //    pictureBoxList2[i].Image = null;
+                    //    pictureBoxList2[i].BackColor = DefaultBackColor;
+                    //    pictureBoxList2[i].BorderStyle = BorderStyle.None;
+                    //    pictureBoxList2[i].Tag = null;
+                    //}
+
+                    //for (int i = 0; i < BaiCuaDoiThu.Count(); i++)
+                    //{
+                    //    pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
+                    //    pictureBoxList2[i].BackColor = Color.White;
+                    //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
+                    //    pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
+                    //}
                 }
             }
         }
@@ -162,66 +196,47 @@ namespace Client
             //Khi bấm vào 1 quân bài thì sẽ có 1 double được add về buffer
             string input = txtDanh.Text;
             input = input.Trim();
-            string[] Input = input.Split('\t');
+            string[] Input = input.Split(' ');
             foreach (var i in Input)
                 Buffer.Add(Convert.ToDouble(i));          
             string flag = "";
            if (XuLyBai.KiemTraHopLe(Buffer, BaiCuaDoiThu) == true)//Nếu những quân bài đánh ra hợp lệ thì làm 3 viêc: 1. Xóa những quân bài đã đánh ra khỏi List BaiHienTai; 2.Nếu số quân bài còn lại ==0 thì gán thêm flag win cho server; 3. Trả về kết quả đánh
             {
-                List<PictureBox> pictureBoxList = new List<PictureBox>();
-
-                pictureBoxList.Add(pictureBox1);
-                pictureBoxList.Add(pictureBox2);
-                pictureBoxList.Add(pictureBox3);
-                pictureBoxList.Add(pictureBox4);
-                pictureBoxList.Add(pictureBox5);
-                pictureBoxList.Add(pictureBox6);
-                pictureBoxList.Add(pictureBox7);
-                pictureBoxList.Add(pictureBox8);
-                pictureBoxList.Add(pictureBox9);
-                pictureBoxList.Add(pictureBox10);
-                pictureBoxList.Add(pictureBox11);
-                pictureBoxList.Add(pictureBox12);
-                pictureBoxList.Add(pictureBox13);
-                pictureBoxList.Add(pictureBox14);
-                pictureBoxList.Add(pictureBox15);
-                pictureBoxList.Add(pictureBox16);
-                pictureBoxList.Add(pictureBox17);
-                pictureBoxList.Add(pictureBox18);
-                pictureBoxList.Add(pictureBox19);
-                pictureBoxList.Add(pictureBox20);
-                pictureBoxList.Add(pictureBox21);
-                pictureBoxList.Add(pictureBox22);
-                pictureBoxList.Add(pictureBox23);
-                pictureBoxList.Add(pictureBox24);
-                pictureBoxList.Add(pictureBox25);
-                pictureBoxList.Add(pictureBox26);
-
-                int j = 25;
+                
                 for (int i = 0; i < Buffer.Count(); i++)
                 {
-
-                    pictureBoxList[j].Image = Image.FromFile(path + Buffer[0].ToString() + ".png");
-                    pictureBoxList[j].BackColor = Color.White;
-                    pictureBoxList[j].BorderStyle = BorderStyle.FixedSingle;
-                    --j;
+                    pictureBoxList2[i].Image = Image.FromFile(path + Buffer[i].ToString() + ".png");
+                    pictureBoxList2[i].BackColor = Color.White;
+                    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
                 }
 
 
 
                 foreach (var i in Buffer)
                     BaiHienTai.Remove(i);
+                BaiHienTai.Sort();
+
+                for (int i = 0; i < 13; i++)
+                {
+                    pictureBoxList1[i].Image = null;
+                    pictureBoxList1[i].BackColor = DefaultBackColor;
+                    pictureBoxList1[i].BorderStyle = BorderStyle.None;
+                    pictureBoxList1[i].Location = new Point(pictureBoxList1[i].Location.X, Y);
+                    pictureBoxList1[i].Tag = null;
+                    txtDanh.Clear();
+                }
 
                 for (int i = 0; i < BaiHienTai.Count(); i++)
                 {
 
-                    pictureBoxList[i].Image = Image.FromFile(path + BaiHienTai[0].ToString() + ".png");
-                    pictureBoxList[i].BackColor = Color.White;
-                    pictureBoxList[i].BorderStyle = BorderStyle.FixedSingle;
+                    pictureBoxList1[i].Image = Image.FromFile(path + BaiHienTai[i].ToString() + ".png");
+                    pictureBoxList1[i].BackColor = Color.White;
+                    pictureBoxList1[i].BorderStyle = BorderStyle.FixedSingle;
+                    pictureBoxList1[i].Tag = BaiHienTai[i];
 
                 }
                 //Gọi hàm load hình LoadHinh(Buffer)
-               
+
                 txbBai.Text = ConvertToString(BaiHienTai);// gọi hàm load hinh; LoadHinh(BaiHienTai)
                 if (BaiHienTai.Count == 0){
                     flag = "win";
@@ -270,8 +285,5 @@ namespace Client
             return String;
 
         }
-
-
-      
     }
 }
