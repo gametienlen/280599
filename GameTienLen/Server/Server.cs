@@ -172,7 +172,7 @@ namespace Server
                         //if (danhSachPhong[sophong].players[i].pos != pos || i!= turn)
                         //    socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
                         if (danhSachPhong[sophong].players[i].pos == pos || i == turn)
-                            break;
+                            continue;
                         socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
                     }
                 }

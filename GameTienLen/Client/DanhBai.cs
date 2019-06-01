@@ -23,10 +23,8 @@ namespace Client
         List<PictureBox> pictureBoxList1 = new List<PictureBox>();
         List<PictureBox> pictureBoxList2 = new List<PictureBox>();
 
-        List<PictureBox> pictureBoxList3 = new List<PictureBox>();
 
-
-        string path = @"C:\Users\ASUS\Desktop\gametienlien 31-5\GameTienLen\Client\Resources\";
+        string path = @"C:\Users\DELL\OneDrive\Desktop\Game3\GameTienLen\Client\Resources\";
         public DanhBai(TCPModel player, TCPModel Opponent)
         {
             InitializeComponent();
@@ -66,19 +64,6 @@ namespace Client
             pictureBoxList2.Add(pictureBox25);
             pictureBoxList2.Add(pictureBox26);
 
-            pictureBoxList3.Add(pictureBox27);                                         
-            pictureBoxList3.Add(pictureBox28);
-            pictureBoxList3.Add(pictureBox29);
-            pictureBoxList3.Add(pictureBox30);
-            pictureBoxList3.Add(pictureBox31);
-            pictureBoxList3.Add(pictureBox32);
-            pictureBoxList3.Add(pictureBox33);
-            pictureBoxList3.Add(pictureBox34);
-            pictureBoxList3.Add(pictureBox35);
-            pictureBoxList3.Add(pictureBox36);
-            pictureBoxList3.Add(pictureBox37);
-            pictureBoxList3.Add(pictureBox38);
-            pictureBoxList3.Add(pictureBox39);
             Thread t = new Thread(NhanBai);
             t.Start();
 
@@ -88,23 +73,24 @@ namespace Client
         { 
             for (int i = 0; i < n; i++)
             {
-                pictureBoxList2[i].Image.Dispose();
-                pictureBoxList2[i].BackColor = DefaultBackColor;
-                pictureBoxList2[i].BorderStyle = BorderStyle.None;
-                pictureBoxList2[i].Tag = null;
+                //pictureBoxList2[i].Image = null;
+                //pictureBoxList2[i].BackColor = DefaultBackColor;
+                //pictureBoxList2[i].Tag = null;
+                pictureBoxList2[i].Refresh();
+                pictureBoxList2[i].Visible = false;
             }
         }
         void ResetPictureBoxList1(int n)
         {
             for (int i = 0; i < n; i++)
             {
-                pictureBoxList1[i].Image.Dispose();
+                pictureBoxList1[i].Image = null;
                 pictureBoxList1[i].BackColor = DefaultBackColor;
-                pictureBoxList1[i].BorderStyle = BorderStyle.None;
                 pictureBoxList1[i].Tag = null;
             }
         }
-        private void btnReady_Click(object sender, EventArgs e)
+
+         private void btnReady_Click(object sender, EventArgs e)
         {          
             tcpForPlayer.SendData("chiabai");
             string result = tcpForPlayer.ReadData();
@@ -123,6 +109,7 @@ namespace Client
             txbBai.Text = ConvertToString(BaiHienTai);//gọi hàm load hình LoadHinh(BaiHienTai)  
             for(int i=0;i<BaiHienTai.Count();i++)
             {
+                pictureBoxList1[i].Visible = true;
                 pictureBoxList1[i].Image = Image.FromFile(path + BaiHienTai[i].ToString() + ".png");
                 pictureBoxList1[i].BackColor = Color.White;
                 pictureBoxList1[i].BorderStyle = BorderStyle.FixedSingle;
@@ -215,21 +202,16 @@ namespace Client
                     {
                         ConvertToListDouble(BaiCuaDoiThu, result);
                         txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
-                        for (int i = 0; i < 13; i++)
-                        {
-                            pictureBoxList2[i].Image = null;
-                            pictureBoxList2[i].BackColor = DefaultBackColor;
-                            pictureBoxList2[i].BorderStyle = BorderStyle.None;
-                            pictureBoxList2[i].Tag = null;
-                        }
-
-                        for (int i = 0; i < BaiCuaDoiThu.Count(); i++)
-                        {
-                            pictureBoxList2[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
-                            pictureBoxList2[i].BackColor = Color.White;
-                            pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
-                            pictureBoxList2[i].Tag = BaiCuaDoiThu[i];
-                        }
+                        //ResetPictureBoxList3(BaiCuaDoiThu.Count());
+                        //for (int i = 0; i < BaiCuaDoiThu.Count(); i++)
+                        //{
+                        //    pictureBoxList3[i].Image = Image.FromFile(path + BaiCuaDoiThu[i].ToString() + ".png");
+                        //    pictureBoxList3[i].BackColor = Color.White;
+                        //    pictureBoxList3[i].BorderStyle = BorderStyle.FixedSingle;
+                        //    pictureBoxList3[i].Tag = BaiCuaDoiThu[i];
+                        //}
+                        string temp = ConvertToString(BaiCuaDoiThu);
+                        HienThiBai(temp);
                     }
                     result = "";
                 }
@@ -263,15 +245,17 @@ namespace Client
             string flag = "";
            if (XuLyBai.KiemTraHopLe(Buffer, BaiCuaDoiThu) == true)//Nếu những quân bài đánh ra hợp lệ thì làm 3 viêc: 1. Xóa những quân bài đã đánh ra khỏi List BaiHienTai; 2.Nếu số quân bài còn lại ==0 thì gán thêm flag win cho server; 3. Trả về kết quả đánh
             {
-                
-                for (int i = 0; i < Buffer.Count(); i++)
-                {
-                    pictureBoxList2[i].Image = Image.FromFile(path + Buffer[i].ToString() + ".png");
-                    pictureBoxList2[i].BackColor = Color.White;
-                    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
-                }
-
-
+                string temp;
+                temp = ConvertToString(Buffer);
+                ResetPictureBoxList2(13);
+                HienThiBai(temp);
+                //for (int i = 0; i < Buffer.Count(); i++)
+                //{
+                //    pictureBoxList2[i].BringToFront();
+                //    pictureBoxList2[i].Image = Image.FromFile(path + Buffer[i].ToString() + ".png");
+                //    pictureBoxList2[i].BackColor = Color.White;
+                //    pictureBoxList2[i].BorderStyle = BorderStyle.FixedSingle;
+                //}
 
                 foreach (var i in Buffer)
                     BaiHienTai.Remove(i);
@@ -280,11 +264,16 @@ namespace Client
                 for (int i = 0; i < 13; i++)
                 {
                     pictureBoxList1[i].Image = null;
-                    pictureBoxList1[i].BackColor = DefaultBackColor;
+                    pictureBoxList1[i].BackColor = this.BackColor;
                     pictureBoxList1[i].BorderStyle = BorderStyle.None;
                     pictureBoxList1[i].Location = new Point(pictureBoxList1[i].Location.X, Y);
                     pictureBoxList1[i].Tag = null;
                     txtDanh.Clear();
+                }
+
+                for(int i=BaiHienTai.Count();i<13;i++)
+                {
+                    pictureBoxList1[i].Visible = false;
                 }
 
                 for (int i = 0; i < BaiHienTai.Count(); i++)
@@ -354,16 +343,15 @@ namespace Client
             //p7.BackgroundImage = p8.BackgroundImage = p9.BackgroundImage = p10.BackgroundImage = null;
             //p11.BackgroundImage = p12.BackgroundImage = p13.BackgroundImage = null;
 
+            ResetPictureBoxList2(13);
+
             for (int i = 0; i < a.Length ; i++)
             {
                 pictureBoxList2[i].BringToFront();
                 pictureBoxList2[i].Tag = a[i];
+                pictureBoxList2[i].BackColor = Color.White;
                 pictureBoxList2[i].BackgroundImage = Image.FromFile(path + a[i] + ".png");
                 pictureBoxList2[i].Visible = true;
-
-
-
-             
             }
             //if (a[0] == "d")
             //    return;
