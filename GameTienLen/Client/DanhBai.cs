@@ -19,12 +19,12 @@ namespace Client
         private List<double> BaiCuaDoiThu = new List<double>();
         int Y;
         int X;
-
+        int[] op;//Mảng dùng để lưu STT của đối thủ trong bàn
         List<PictureBox> pictureBoxList1 = new List<PictureBox>();
         List<PictureBox> pictureBoxList2 = new List<PictureBox>();
 
 
-        string path = @"C:\Users\DELL\OneDrive\Desktop\Game3\GameTienLen\Client\Resources\";
+        string path = @"C:\Users\ASUS\Desktop\1-6\280599\GameTienLen\Client\Resources\";
         public DanhBai(TCPModel player, TCPModel Opponent)
         {
             InitializeComponent();
@@ -94,13 +94,23 @@ namespace Client
         {          
             tcpForPlayer.SendData("chiabai");
             string result = tcpForPlayer.ReadData();
-           
+
             //Nếu người chơi nhận được lượt đánh thì enable btbDanh
+            int players = Convert.ToInt32(result[result.Length - 2].ToString());
+            op = new int[players - 1];
+            int Myturn = Convert.ToInt16(result.Last().ToString());
+
+            op[0] = (Myturn + 1) % players;
+            for (int i = 1; i < players - 1; i++)
+                op[i] = (op[i - 1] + 1) % players;
+           
+
             if (result.Contains("turn")){
-                result = result.Remove(result.Length - 4);//Xóa 4 kí tự cuối chuối(là string "turn")
+                result = result.Remove(result.Length - 6);//Xóa 6 kí tự cuối chuối(là string "turni")
                 btnDanh.Enabled = true;
-            }   
-            
+            }
+            else
+                result = result.Remove(result.Length - 2);
             ConvertToListDouble(BaiHienTai, result);//Convert từ string sang List<double>
             //Kiểm tra xem bài của người cho có tới trắng hay không
             if (XuLyBai.KiemTraToiTrang(BaiHienTai) == true)
@@ -134,13 +144,15 @@ namespace Client
                     //Trường người chơi trước bỏ lượt, và lượt hiện tại của người chơi này
                     else if (result == "turn")
                     {
+
                         btnDanh.Enabled = true;
                         btnBoLuot.Enabled = true;
                     }
                     //Trường hợp tới lượt đánh của người chơi
                     else if (result.Contains("turn"))
                     {
-                        result = result.Remove(result.Length - 4);//Xóa 4 kí tự cuối chuối(là string "turn")
+                        MessageBox.Show(result.Last().ToString());
+                        result = result.Remove(result.Length - 5);//Xóa 4 kí tự cuối chuối(là string "turn")
                         btnDanh.Enabled = true;
                         btnBoLuot.Enabled = true;
                         ConvertToListDouble(BaiCuaDoiThu, result);
@@ -172,7 +184,8 @@ namespace Client
                     //Đây là trường hợp đã có người chơi trong bàn win. Tiến hành Load bài đó và set lại game
                     else if (result.Contains("win"))
                     {
-                        result = result.Remove(result.Length - 3);
+                        MessageBox.Show("Player " + result.Last() + " win");
+                        result = result.Remove(result.Length - 4);
                         ConvertToListDouble(BaiCuaDoiThu, result);
                         txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
 
@@ -200,6 +213,8 @@ namespace Client
                     //Đây là trường hợp người chơi không có lượt đánh. Chỉ nhận được bài của đối thủ
                     else if (char.IsDigit(result[0]))
                     {
+                        MessageBox.Show(result.Last().ToString());
+                        result = result.Remove(result.Length - 1);
                         ConvertToListDouble(BaiCuaDoiThu, result);
                         txtBaiCuaDoiThu.Text = ConvertToString(BaiCuaDoiThu);//Load bài của đối thủ
                         //ResetPictureBoxList3(BaiCuaDoiThu.Count());
@@ -212,6 +227,10 @@ namespace Client
                         //}
                         string temp = ConvertToString(BaiCuaDoiThu);
                         HienThiBai(temp);
+                    }
+                    else if(result.Contains("boluot"))
+                    {
+                        MessageBox.Show("Player " + result.Last() + " pass");
                     }
                     result = "";
                 }
@@ -307,6 +326,7 @@ namespace Client
                 ((PictureBox)sender).Location = new Point(((PictureBox)sender).Location.X, ((PictureBox)sender).Location.Y - 20);
                 txtDanh.Text = txtDanh.Text + ((PictureBox)sender).Tag.ToString() + ' ';
                 return;
+
             }
             if (((PictureBox)sender).Location.Y < Y)
             {

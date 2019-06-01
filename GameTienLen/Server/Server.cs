@@ -117,6 +117,8 @@ namespace Server
 
         void SetBoLuot(int sophong)
         {
+
+            int luotbo = danhSachPhong[sophong].turn;
             while (danhSachPhong[sophong].DanhSachBoLuot.Contains(danhSachPhong[sophong].turn))
                 danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
 
@@ -158,13 +160,13 @@ namespace Server
                 if (char.IsDigit(str[0]) && !str.Contains("win"))
                 {
                     //set turn
-                   
+                    int oldTurn = danhSachPhong[sophong].turn;
                     danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
                     SetBoLuot(sophong);
 
                     int turn = danhSachPhong[sophong].turn;
                     //Gửi bài kèm theo lượt cho người chơi
-                    socketList2[danhSachPhong[sophong].players[turn].pos].SendData(str + "turn");
+                    socketList2[danhSachPhong[sophong].players[turn].pos].SendData(str + "turn"+oldTurn);
                     //Gửi cho người chơi còn lại trong phòng
                     for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
                     {
@@ -173,11 +175,12 @@ namespace Server
                         //    socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
                         if (danhSachPhong[sophong].players[i].pos == pos || i == turn)
                             continue;
-                        socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
+                        socketList2[danhSachPhong[sophong].players[i].pos].SendData(str+ oldTurn);
                     }
                 }
                 if (str == "boluot")
                 {
+                    int oldTurn = danhSachPhong[sophong].turn;
                     //Thêm ID của người chơi hiện tại về danh sách bỏ lượt
                     danhSachPhong[sophong].DanhSachBoLuot.Add(danhSachPhong[sophong].turn);
 
@@ -189,6 +192,12 @@ namespace Server
                                 danhSachPhong[sophong].turn = i;
 
                         socketList2[danhSachPhong[sophong].players[danhSachPhong[sophong].turn].pos].SendData("newturn");
+                        for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
+                        {                         
+                            if (danhSachPhong[sophong].players[i].pos == pos || i == danhSachPhong[sophong].turn)
+                                continue;
+                            socketList2[danhSachPhong[sophong].players[i].pos].SendData("boluot"+ oldTurn);
+                        }
                         danhSachPhong[sophong].DanhSachBoLuot.Clear();
                     }
                     else
@@ -196,6 +205,12 @@ namespace Server
                         danhSachPhong[sophong].turn = (danhSachPhong[sophong].turn + 1) % danhSachPhong[sophong].soNguoiChoiTaiLucChiaBai;
                         SetBoLuot(sophong);
                         socketList2[danhSachPhong[sophong].players[danhSachPhong[sophong].turn].pos].SendData("turn");
+                        for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
+                        {
+                            if (danhSachPhong[sophong].players[i].pos == pos || i == danhSachPhong[sophong].turn)
+                                continue;
+                            socketList2[danhSachPhong[sophong].players[i].pos].SendData("boluot" + oldTurn);
+                        }
                     }
                 }
                 if (str.Contains("win"))
@@ -203,7 +218,7 @@ namespace Server
                     danhSachPhong[sophong].ResetRoom(danhSachPhong[sophong].turn);
                     for (int i = 0; i < danhSachPhong[sophong].soNguoiTrongPhong; i++)
                         if (danhSachPhong[sophong].players[i].pos != pos)
-                            socketList2[danhSachPhong[sophong].players[i].pos].SendData(str);
+                            socketList2[danhSachPhong[sophong].players[i].pos].SendData(str+ danhSachPhong[sophong].turn);
                 }
 
             }

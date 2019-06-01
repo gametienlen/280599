@@ -82,20 +82,20 @@ namespace Server
                     if (NguoiChoiCoQuanBaiNhoNhat(NguoiChoi) == i)
                     {
                         turn = i;
-                        SocketList[players[i].pos].SendData(NguoiChoi[i] + "turn");
+                        SocketList[players[i].pos].SendData(NguoiChoi[i] + "turn" +count+i);//Khi gửi bài về cho người chơi thì gửi kèm theo STT trong bàn
                     }
                     else
-                        SocketList[players[i].pos].SendData(NguoiChoi[i]);
+                        SocketList[players[i].pos].SendData(NguoiChoi[i] + count + i);//Như trên
                 }
             }
             //Nếu là ván thứ hai trở đi, thì lượt đánh dành cho người chơi thắng ván trước đó
             else
             {
-                SocketList[players[turn].pos].SendData(NguoiChoi[turn] + "turn");
+                SocketList[players[turn].pos].SendData(NguoiChoi[turn] + "turn" + count + turn);
                 for (int i = 0; i < count; i++)
                 {
                     if (i != turn)
-                        SocketList[players[i].pos].SendData(NguoiChoi[i]);
+                        SocketList[players[i].pos].SendData(NguoiChoi[i] + count + i);
                 }
             }
 
